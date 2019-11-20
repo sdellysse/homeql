@@ -1,0 +1,19 @@
+{
+  "name": "kasa",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "node": "NODE_ENV=development babel-node"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@babel/core": "^7.7.2",
+    "@babel/node": "^7.7.0",
+    "@babel/preset-env": "^7.7.1",
+    "tplink-smarthome-api": "^1.2.0",
+    "uuid": "^3.3.3"
+  }
+}
