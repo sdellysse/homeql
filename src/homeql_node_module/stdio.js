@@ -1,25 +1,54 @@
 import readline from "readline";
+import uuid from "uuid/v4";
 
-export default ({ onLine }) => {
-	const stdio = readline.createInterface({
-		input: process.stdin,
-		output: process.stdout,
-	});
+const conn = readline.createInterface({
+	input: process.stdin,
+	output: process.stdout,
+});
 
-	stdio.on("line", async (line) => {
-		let obj = null;
-		try {
-			obj = JSON.parse(line);
-		} catch (_e) {
-			console.error("MALFORMED INPUT");
-			return;
-		}
+conn.on("line", (line) => {
+	let message = null;
+	try {
+		message = JSON.parse(line);
+	} catch (_e) {
+		console.error("MALFORMED INPUT");
+		return;
+	}
 
-		await onLine(obj);
-	});
+	conn.emit("driverMessage", message);
+});
 
-	return {
-		stdio,
-		writeLine: (obj) => console.log(JSON.stringify(obj)),
-	};
-}
+const stdio = {
+	conn,
+
+	onDriverMessage: (fn) => conn.on("driverMessage", fn),
+
+	writeLine: (obj) => console.log(JSON.stringify(obj)),
+
+	emit: (eventId, data) => {
+		const id = uuid();
+
+		stdio.writeLine({
+			"_id": id,
+			"emit": eventId,
+			"data": data,
+		});
+
+		return id;
+	},
+
+	reply: (requestId, { error = false, data = {} } = {}) => {
+		const id = uuid();
+
+		stdio.writeLine({
+			"_id": id,
+			"reply_to": requestId,
+			"error": error,
+			"data": data,
+		});
+
+		return id;
+	},
+};
+
+export default stdio;
