@@ -2,15 +2,17 @@ import stdio from "./stdio";
 
 export { stdio };
 
-export const implementDriver = ({ autodetect }) => {
-	stdio.onDriverMessage((message) => {
-		if (false) {
-		} else if (autodetect && (message["command"] === "autodetect")) {
-			autodetect(message["_id"], {
-				eventId: message["event_id"],
-			});
+export const runDriver = ({ commands }) => stdio.onDriverMessage(async (message) => {
+	if (message["command"] != null) {
+		const commandHandler = commands[message["command"]];
+		if (!commandHandler) {
+			console.error("MALFORMED MESSAGE: ", message);
 		} else {
-			console.error("MALFORMED MESSAGE:", message);
+			const replyData = await commandHandler(message);
+
+			if (message["reply_id"] && (replyData !== undefined)) {
+				stdio.reply(message["reply_id"], replyData);
+			}
 		}
-	});
-};
+	}
+});

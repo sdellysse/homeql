@@ -1,3 +1,3 @@
 #!/bin/sh
 
-echo '{"_id": "foo1", "command": "autodetect", "event_id": "autodetected"}' | ./src/drivers/kasa/kasa.sh
+echo '{"command": "discovery_enable", "reply_id": "r01", "event_id": "discovery_event"}' | exec ./src/drivers/kasa/kasa.sh

@@ -23,32 +23,15 @@ const stdio = {
 
 	onDriverMessage: (fn) => conn.on("driverMessage", fn),
 
-	writeLine: (obj) => console.log(JSON.stringify(obj)),
+	writeLine: (obj) => console.log("STDOUT ", JSON.stringify(obj)),
+	tickle: (eventId) => stdio.writeLine({ "tickle": eventId }),
+	reply: (replyId, { error, data = {} })=> stdio.writeLine({
+		"reply_to": replyId,
+		"error": error,
+		"data": data,
+	}),
 
-	emit: (eventId, data) => {
-		const id = uuid();
-
-		stdio.writeLine({
-			"_id": id,
-			"emit": eventId,
-			"data": data,
-		});
-
-		return id;
-	},
-
-	reply: (requestId, { error = false, data = {} } = {}) => {
-		const id = uuid();
-
-		stdio.writeLine({
-			"_id": id,
-			"reply_to": requestId,
-			"error": error,
-			"data": data,
-		});
-
-		return id;
-	},
+	log: (...args) => console.error("STDERR ", ...args),
 };
 
 export default stdio;
